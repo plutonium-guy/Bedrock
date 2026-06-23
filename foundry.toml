@@ -1,0 +1,37 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+# Pin a stable 0.8.x compiler. 0.8.24 ships the Cancun EVM and is well-tested
+# against the OpenZeppelin v5 / Chainlink versions we install.
+solc = "0.8.24"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/",
+    "forge-std/=lib/forge-std/src/",
+]
+
+# Fuzz: number of random inputs per fuzz test.
+[profile.default.fuzz]
+runs = 256
+
+# Invariant: each run fires `depth` random calls; `runs` independent campaigns.
+# fail_on_revert = false lets the bounded handler skip occasional reverting calls
+# (e.g. minting past the health-factor cap) without aborting the whole campaign.
+[profile.default.invariant]
+runs = 128
+depth = 128
+fail_on_revert = false
+
+# RPC endpoints are read from the environment so no secrets live in the repo.
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+# Used by `forge verify-contract` / `--verify` after a Sepolia deploy.
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}", chain = 11155111 }
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
