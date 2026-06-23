@@ -72,8 +72,12 @@ contract Handler is Test {
 
         (uint256 totalDscMinted, uint256 collateralValueInUsd) = engine.getAccountInformation(sender);
         // Max additional DSC = half the collateral USD value minus what's already minted.
+        // Casts are safe: deposits are bounded by uint96 in this handler, so these values are
+        // far below int256.max, and the uint256 cast below is reached only when maxDscToMint > 0.
+        // forge-lint: disable-next-line(unsafe-typecast)
         int256 maxDscToMint = (int256(collateralValueInUsd) / 2) - int256(totalDscMinted);
         if (maxDscToMint <= 0) return;
+        // forge-lint: disable-next-line(unsafe-typecast)
         amount = bound(amount, 1, uint256(maxDscToMint));
 
         vm.prank(sender);
