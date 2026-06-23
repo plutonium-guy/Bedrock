@@ -325,6 +325,37 @@ contract DSCEngineTest is Test {
         engine.getUsdValue(weth, 1 ether);
     }
 
+    function test_StalePriceWhenRoundIncomplete() public {
+        // An incomplete round reports updatedAt == 0, which OracleLib treats as stale.
+        MockV3Aggregator(ethUsdPriceFeed).updateRoundData(1, 2_000e8, 0, 0);
+        vm.expectRevert(OracleLib.OracleLib__StalePrice.selector);
+        engine.getUsdValue(weth, 1 ether);
+    }
+
+    function test_OracleTimeoutIsThreeHours() public pure {
+        assertEq(OracleLib.getTimeout(), 3 hours);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                          VIEW GETTERS / PURE MATH
+    //////////////////////////////////////////////////////////////*/
+
+    function test_Getters() public view {
+        assertEq(engine.getLiquidationThreshold(), 50);
+        assertEq(engine.getLiquidationBonus(), 10);
+        assertEq(engine.getLiquidationPrecision(), 100);
+        assertEq(engine.getMinHealthFactor(), 1e18);
+        assertEq(engine.getPrecision(), 1e18);
+        assertEq(engine.getAdditionalFeedPrecision(), 1e10);
+    }
+
+    function test_CalculateHealthFactor() public view {
+        // No debt => infinitely safe.
+        assertEq(engine.calculateHealthFactor(0, 1_000e18), type(uint256).max);
+        // $20,000 collateral, $100 debt => HF = (20000 * 0.5) / 100 = 100.
+        assertEq(engine.calculateHealthFactor(100e18, 20_000e18), 100e18);
+    }
+
     /*//////////////////////////////////////////////////////////////
                                 HELPERS
     //////////////////////////////////////////////////////////////*/
