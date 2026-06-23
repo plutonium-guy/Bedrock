@@ -120,9 +120,18 @@ forge test
 forge coverage --report summary
 ```
 
-Dependencies: `OpenZeppelin/openzeppelin-contracts`,
-`smartcontractkit/chainlink-brownie-contracts`, `foundry-rs/forge-std`. Remappings live in
-`remappings.txt` / `foundry.toml`.
+Dependencies (official upstream repos): `OpenZeppelin/openzeppelin-contracts` (v5.6.1),
+`smartcontractkit/chainlink`, `foundry-rs/forge-std` (v1.16.1). Only the Chainlink
+`AggregatorV3Interface` is consumed (via `@chainlink/contracts/...`). Remappings live in
+`remappings.txt` / `foundry.toml`; exact revisions are pinned in `foundry.lock`.
+
+> **Note on the Chainlink dependency.** The Solidity contracts live in the
+> `smartcontractkit/chainlink` monorepo only under its **`contracts-*` release tags** (the
+> default `develop` branch no longer ships them). We therefore pin **`contracts-v1.3.0`**. This
+> is the full monorepo (~1.6 GB on disk after checkout) for one interface file, so the first
+> `forge install` / `git submodule update --init` is slow. If you prefer a lightweight official
+> alternative, `smartcontractkit/chainlink-brownie-contracts` is the same contracts published
+> for Foundry — swap the remapping to `lib/chainlink-brownie-contracts/contracts/` and reinstall.
 
 ---
 

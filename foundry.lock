@@ -1,8 +1,8 @@
 {
-  "lib/chainlink-brownie-contracts": {
+  "lib/chainlink": {
     "tag": {
-      "name": "1.3.0",
-      "rev": "5cb41fbc9b525338b6098da5ea7dd0b7e92f89e4"
+      "name": "contracts-v1.3.0",
+      "rev": "b54dfa99b7f6e0d33098315a189ab98e10dca67c"
     }
   },
   "lib/forge-std": {
